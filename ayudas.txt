@@ -1,0 +1,24 @@
+nest generate module employees
+nest generate controller positions
+nest generate controller positions --no-spec
+nest generate service positions --no-spec
+
+nest generate middleware middleware/auth
+
+nest generate resource positions
+
+
+npm install @nestjs/config
+npm i --save class-validator class-transformer
+npm install --save @nestjs/typeorm typeorm pg
+
+docker-compose up -d
+
+https://www.youtube.com/watch?v=wsqcg5ZtUMM&t=7226s
+1:44 h
+
+
+// Generar migraciones de bd
+
+npm run migration:generate -- db/migrations/NewMigration
+npm run migration:run

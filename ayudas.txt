@@ -12,6 +12,9 @@ npm install @nestjs/config
 npm i --save class-validator class-transformer
 npm install --save @nestjs/typeorm typeorm pg
 
+npm install @nestjs/platform-express multer
+npm install --save-dev @types/express
+
 docker-compose up -d
 
 https://www.youtube.com/watch?v=wsqcg5ZtUMM&t=7226s
@@ -23,3 +26,6 @@ https://www.youtube.com/watch?v=wsqcg5ZtUMM&t=7226s
 npm run migration:generate -- db/migrations/NewMigration
 npm run migration:run
 npm run migration:revert
+
+// Ingregar con cloudinary
+npm install cloudinary

@@ -112,7 +112,7 @@ async function seed() {
 
   for (const employee of listEmployees) {
     try {
-      await employeesController.create(employee);
+      await employeesController.create(employee, []);
     } catch (error) {
       console.error(
         `Error al crear empleado ${employee.email}:`,

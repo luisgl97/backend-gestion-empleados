@@ -35,4 +35,6 @@ export class CreateEmployeeDto {
   @IsIn(['A', 'I'], { message: "Status must be 'A' or 'I'" })
   @IsNotEmpty({ message: 'Estado es requerido' })
   status?: 'A' | 'I';
+
+  
 }

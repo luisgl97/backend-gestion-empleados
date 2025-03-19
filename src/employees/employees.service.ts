@@ -42,7 +42,7 @@ export class EmployeesService {
   async findAll(): Promise<Employee[]> {
     try {
       return await this.employeesRepository.find({
-        relations: ['position', 'documents'],
+        relations: ['position', 'documents','documents.typeDocument'],
         order: { created_at: 'DESC' },
       });
     } catch (error) {
@@ -54,7 +54,7 @@ export class EmployeesService {
     try {
       return await this.employeesRepository.findOne({
         where: { id },
-        relations: ['position', 'documents'],
+        relations: ['position', 'documents','documents.typeDocument'],
       });
     } catch (error) {
       return null;
@@ -108,7 +108,7 @@ export class EmployeesService {
   
       return await this.employeesRepository.find({
         where,
-        relations: ['position', 'documents'],
+        relations: ['position', 'documents', 'documents.typeDocument'],
         order: { created_at: 'DESC' },
       });
     } catch (error) {

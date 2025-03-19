@@ -21,6 +21,7 @@ export class EmployeeDocumentsService {
     }
   }
 
+  
   async findAll(): Promise<EmployeeDocument[]> {
     try {
       return await this.employeeDocumentsRepository.find({ relations: ['employee', 'typeDocument'] });
@@ -52,6 +53,7 @@ export class EmployeeDocumentsService {
 
   async remove(id: number): Promise<boolean> {
     try {
+
       const result = await this.employeeDocumentsRepository.delete(id);
       if (result.affected === 0) {
         return false;
@@ -62,4 +64,32 @@ export class EmployeeDocumentsService {
       return false;
     }
   }
+
+
+  // 🔍 Buscar documentos de un empleado por su ID
+  async findByEmployeeId(employeeId: number): Promise<EmployeeDocument[]> {
+    return this.employeeDocumentsRepository.find({
+      where: { employee: { id: employeeId } },
+      relations: ['employee', 'typeDocument'],
+    });
+  }
+
+  // ❌ Eliminar documentos de un empleado por su ID
+  async deleteByEmployeeId(employeeId: number): Promise<void> {
+    await this.employeeDocumentsRepository.delete({ employee: { id: employeeId } });
+  }
+
+  // 📌 Insertar múltiples documentos
+  async createBulk(documents: { file_path: string; employee_id: number; type_document_id: number }[]) {
+    const newDocuments = documents.map((doc) =>
+      this.employeeDocumentsRepository.create({
+        file_path: doc.file_path,
+        employee: { id: doc.employee_id },
+        typeDocument: { id: doc.type_document_id },
+      }),
+    );
+    return this.employeeDocumentsRepository.save(newDocuments);
+  }
+
+
 }

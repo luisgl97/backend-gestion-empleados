@@ -4,6 +4,16 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+ // Establecer prefijo global para las rutas
+ app.setGlobalPrefix('api');
+
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Authorization',
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true, // Ignora propiedades desconocidas

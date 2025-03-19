@@ -22,3 +22,4 @@ https://www.youtube.com/watch?v=wsqcg5ZtUMM&t=7226s
 
 npm run migration:generate -- db/migrations/NewMigration
 npm run migration:run
+npm run migration:revert

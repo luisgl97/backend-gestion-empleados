@@ -37,7 +37,8 @@ import { dataSourceOptions } from 'db/data-source';
     TypeDocumentsModule,
     EmployeeDocumentsModule,
 
-    CommonModule
+    CommonModule,
+
   ],
 })
 export class AppModule implements NestModule {

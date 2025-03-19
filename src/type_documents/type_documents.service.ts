@@ -1,26 +1,66 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTypeDocumentDto } from './dto/create-type_document.dto';
 import { UpdateTypeDocumentDto } from './dto/update-type_document.dto';
+import { TypeDocument } from './entities/type_document.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class TypeDocumentsService {
-  create(createTypeDocumentDto: CreateTypeDocumentDto) {
-    return 'This action adds a new typeDocument';
+  constructor(
+    @InjectRepository(TypeDocument)
+    private typeDocumentsRepository: Repository<TypeDocument>,
+  ) {}
+
+  async create(createTypeDocumentDto: CreateTypeDocumentDto): Promise<TypeDocument | null> {
+    try {
+      const newTypeDocument = this.typeDocumentsRepository.create(createTypeDocumentDto);
+      return await this.typeDocumentsRepository.save(newTypeDocument);
+    } catch (error) {
+      return null;
+    }
   }
 
-  findAll() {
-    return `This action returns all typeDocuments`;
+  async findAll(): Promise<TypeDocument[]> {
+    try {
+      return await this.typeDocumentsRepository.find();
+    } catch (error) {
+      return [];
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} typeDocument`;
+  async findOne(id: number): Promise<TypeDocument | null> {
+    try {
+      return await this.typeDocumentsRepository.findOne({
+        where: { id },
+        relations: ['documents'],
+      });
+    } catch (error) {
+      return null;
+    }
   }
 
-  update(id: number, updateTypeDocumentDto: UpdateTypeDocumentDto) {
-    return `This action updates a #${id} typeDocument`;
+  async update(id: number, updateTypeDocumentDto: UpdateTypeDocumentDto): Promise<TypeDocument | null> {
+    try {
+      const typeDocument = await this.typeDocumentsRepository.preload({ id, ...updateTypeDocumentDto });
+      if (!typeDocument) return null;
+      return await this.typeDocumentsRepository.save(typeDocument);
+    } catch (error) {
+      return null;
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} typeDocument`;
+  async remove(id: number): Promise<boolean> {
+    try {
+      const result = await this.typeDocumentsRepository.delete(id);
+      
+      if (result.affected === 0) {
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
   }
 }

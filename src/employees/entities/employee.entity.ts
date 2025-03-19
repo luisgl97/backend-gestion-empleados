@@ -1,3 +1,4 @@
+import { EmployeeDocument } from 'src/employee_documents/entities/employee_document.entity';
 import { Position } from 'src/positions/entities/position.entity';
 import {
   Entity,
@@ -7,6 +8,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 
 enum EmployeeStatus {
@@ -34,9 +36,10 @@ export class Employee {
   @Column({ type: 'varchar', length: 255 })
   password: string;
 
-  @ManyToOne(() => Position, (position) => position.employees)
-  @JoinColumn({ name: 'position_id' })
-  position: Position
+  @ManyToOne(() => Position, (position) => position.employees) 
+  @JoinColumn({ name: 'position_id' }) 
+  position: Position;
+
 
   @Column({ type: 'numeric', precision: 10, scale: 2 })
   salary: number;
@@ -57,4 +60,7 @@ export class Employee {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updated_at: Date;
+
+  @OneToMany(() => EmployeeDocument, (employeeDocument) => employeeDocument.employee)
+  documents: EmployeeDocument[];
 }

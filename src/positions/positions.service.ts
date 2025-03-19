@@ -7,43 +7,58 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class PositionsService {
+  constructor(
+    @InjectRepository(Position)
+    private positionsRepository: Repository<Position>,
+  ) {}
 
-  
-    constructor(
-      @InjectRepository(Position)
-      private positionsRepository: Repository<Position>,
-    ) {}
-
-  create(createPositionDto: CreatePositionDto) {
-
-    console.log('createPositionDto',createPositionDto)
-    const newPosition = this.positionsRepository.create(createPositionDto);
-
-    return this.positionsRepository.save(newPosition);
-  }
-
-  async findAll() {
-    return await this.positionsRepository.find();
-  }
-
-  async findOne(id: number) {
-    return await this.positionsRepository.findOneBy({id});
-  }
-
-  async update(id: number, updatePositionDto: UpdatePositionDto) {
-
-    const position = await this.findOne(id);
-
-    return this.positionsRepository.save({...position, ...updatePositionDto});
-  }
-
-  async remove(id: number) {
-    const position = await this.findOne(id);
-
-    if (!position) {
-      throw new Error(`Position with id ${id} not found`);
+  async create(createPositionDto: CreatePositionDto): Promise<Position | null> {
+    try {
+      const newPosition = this.positionsRepository.create(createPositionDto);
+      return await this.positionsRepository.save(newPosition);
+    } catch (error) {
+      return null;
     }
+  }
 
-    return this.positionsRepository.remove(position);
+  async findAll(): Promise<Position[]> {
+    try {
+      return await this.positionsRepository.find();
+    } catch (error) {
+      return [];
+    }
+  }
+
+  async findOne(id: number): Promise<Position | null> {
+    try {
+      return await this.positionsRepository.findOne({
+        where: { id },
+      });
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async update(id: number, updatePositionDto: UpdatePositionDto): Promise<Position | null> {
+    try {
+      const position = await this.positionsRepository.preload({ id, ...updatePositionDto });
+      if (!position) return null;
+      return await this.positionsRepository.save(position);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async remove(id: number): Promise<boolean> {
+    try {
+      const result = await this.positionsRepository.delete(id);
+      if (result.affected === 0) {
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
   }
 }

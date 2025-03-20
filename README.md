@@ -87,3 +87,7 @@ El backend estará disponible en `http://localhost:3000` por defecto.
 - `DELETE /api/type-documents/:id` - Eliminar un tipo de documento
 
 
+## Modelo de datos
+
+![Modelo de datos](Modelo-Datos-Gestion-Empleados.png)
+

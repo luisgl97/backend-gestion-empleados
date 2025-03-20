@@ -14,10 +14,7 @@ import { TypeDocumentsController } from '../type_documents/type_documents.contro
 
 async function seed() {
 
-
-    //Eliminar toda la data primero antes de insertarlo
-
-    
+  //Eliminar toda la data primero antes de insertarlo
 
   const app = await NestFactory.createApplicationContext(AppModule);
 

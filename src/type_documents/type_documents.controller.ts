@@ -3,11 +3,11 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   BadRequestException,
   NotFoundException,
+  Put,
 } from '@nestjs/common';
 import { TypeDocumentsService } from './type_documents.service';
 import { CreateTypeDocumentDto } from './dto/create-type_document.dto';
@@ -41,7 +41,7 @@ export class TypeDocumentsController {
     return { status: 'ok', data: typeDocument, message: 'Tipo de documento encontrado' };
   }
 
-  @Patch(':id')
+  @Put(':id')
   async update(@Param('id') id: string, @Body() updateTypeDocumentDto: UpdateTypeDocumentDto) {
     const updatedTypeDocument = await this.typeDocumentsService.update(+id, updateTypeDocumentDto);
     if (!updatedTypeDocument) {

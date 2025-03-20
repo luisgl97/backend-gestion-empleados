@@ -3,11 +3,11 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   BadRequestException,
   NotFoundException,
+  Put,
 } from '@nestjs/common';
 import { EmployeeDocumentsService } from './employee_documents.service';
 import { CreateEmployeeDocumentDto } from './dto/create-employee_document.dto';
@@ -68,7 +68,7 @@ export class EmployeeDocumentsController {
     };
   }
 
-  @Patch(':id')
+  @Put(':id')
   async update(
     @Param('id') id: string,
     @Body() updateEmployeeDocumentDto: UpdateEmployeeDocumentDto,

@@ -91,5 +91,11 @@ export class EmployeeDocumentsService {
     return this.employeeDocumentsRepository.save(newDocuments);
   }
 
+  async findByEmployeeIdAndTypeDocument(employeeId: number, typeDocument: number){
+    return this.employeeDocumentsRepository.findOne({
+      where: { employee: { id: employeeId }, typeDocument: {id: typeDocument} },
+      relations: ['employee', 'typeDocument'],
+    });
+  }
 
 }

@@ -23,6 +23,7 @@ import { ValidateDynamicDocumentsPipe } from './pipes/validate-dynamic-documents
 import { Multer } from 'multer';
 import { CloudinaryService } from 'src/common/services/cloudinary.service';
 import { EmployeeDocumentsService } from 'src/employee_documents/employee_documents.service';
+import { extractPublicId } from 'src/utils/extractPublicId';
 
 @Controller('employees')
 export class EmployeesController {
@@ -39,10 +40,7 @@ export class EmployeesController {
     createEmployeeDto: CreateEmployeeDto,
     @UploadedFiles() files: Array<Multer.File>, // Captura los archivos
   ) {
-    console.log(createEmployeeDto);
-
-    console.log(files);
-
+   
     //validar que el empleado no tenga un email ya registrado
     const employeeByEmail = await this.employeesService.findByEmail(
       createEmployeeDto.email,
@@ -69,10 +67,8 @@ export class EmployeesController {
       });
     }
 
-    
     const folderName = `${createEmployeeDto.first_name}_${createEmployeeDto.last_name}_${createEmployeeDto.dni}`;
-    console.log('folderName', folderName)
-
+   
     let uploadedFiles:{type_document_id:number; url: string}[] = [];
 
     if(files.length !=0){
@@ -119,8 +115,6 @@ export class EmployeesController {
       // insertar cada document de documents en employeeDocumentsService
 
       const savedDocuments = await this.employeeDocumentsService.createBulk(documents);
-      console.log('savedDocuments', savedDocuments)
-
     }
 
     return {
@@ -154,6 +148,44 @@ export class EmployeesController {
     };
   }
 
+  @Post("/view-pdf")
+  async viewPdfEmployee(@Body() search: { employee_id: number; document_type_id: number }) {
+    
+    const employee = await this.employeeDocumentsService.findByEmployeeIdAndTypeDocument(search.employee_id, search.document_type_id);
+
+    if(!employee){
+      return { status: 'error', data: null, message:'Url no encontrada'}
+    }
+
+    return { status: 'ok', data: employee.file_path, message: 'Url encontrado' };
+  }
+
+  @Post("/delete-pdf")
+  async DeletePdfEmployee(@Body() search: { employee_id: number; document_type_id: number }) {
+    
+    const employee = await this.employeeDocumentsService.findByEmployeeIdAndTypeDocument(search.employee_id, search.document_type_id);
+
+    if(!employee){
+      return { status: 'error', message:'Url no encontrada'}
+    }
+
+    const publicId = extractPublicId(employee?.file_path || "");
+    // Eliminar cloudinary
+    const deletedCloudinary = await this.cloudinaryService.deleteFile(publicId);
+ 
+    const deleted = await this.employeeDocumentsService.remove(employee.id);
+    if (!deleted) {
+      throw new BadRequestException({
+        status: 'error',
+        message: 'Error al eliminar documento del empleado',
+      });
+    }
+    return {
+      status: 'ok',
+      message: 'Documento del empleado eliminado con éxito',
+    };
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const employee = await this.employeesService.findOne(+id);
@@ -176,8 +208,7 @@ export class EmployeesController {
   ) {
 
     const folderName = `${updateEmployeeDto.first_name}_${updateEmployeeDto.last_name}_${updateEmployeeDto.dni}`;
-    console.log('folderName', folderName)
-
+  
     let uploadedFiles:{type_document_id:number; url: string}[] = [];
 
     if(files.length !=0){

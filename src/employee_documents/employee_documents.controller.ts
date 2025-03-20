@@ -95,10 +95,10 @@ export class EmployeeDocumentsController {
   async remove(@Param('id') id: string) {
 
     const document = await this.employeeDocumentsService.findOne(+id);
-    console.log('document', document)
+ 
     const publicId = extractPublicId(document?.file_path || "");
     // Eliminar cloudinary
-    const isDeleted = await this.cloudinaryService.deleteFile(publicId);
+     await this.cloudinaryService.deleteFile(publicId);
 
     const deleted = await this.employeeDocumentsService.remove(+id);
     if (!deleted) {
